@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+- service.yaml
+- route.yaml
+images:
+- name: quay.io/theorei/eurotunnel-app
+  newName: quay.io/theorei/eurotunnel-app
+  newTag: 95aab8496483f822defbf368db75eac11db88e026a9ede05674a0437e89973f6
+- name: quay.io/theorei/eurotunnel-app:95aab8496483f822defbf368db75eac11db88e026a9ede05674a0437e89973f6
+  newName: quay.io/theorei/eurotunnel-app
