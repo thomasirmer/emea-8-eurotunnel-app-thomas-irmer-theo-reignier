@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: eurotunnel-app-run-
+spec:
+  serviceAccountName: build-bot
+  params:
+    - name: github-repo
+      value: https://github.com/cloud-native-garage-method-cohort/emea-8-eurotunnel-app-thomas-irmer-theo-reignier
+    - name: image-repo
+      value: quay.io/theorei/eurotunnel-app
+  pipelineRef:
+    name: eurotunnel-app
+  workspaces:
+  - name: pipeline-shared-data
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
