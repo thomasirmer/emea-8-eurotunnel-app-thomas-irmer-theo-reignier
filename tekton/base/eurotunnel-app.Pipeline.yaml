@@ -1,0 +1,50 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: eurotunnel-app
+spec:
+  workspaces: 
+    - name: pipeline-shared-data
+  params:
+    - name: github-repo
+      type: string
+      description: GitHub repository url
+    - name: image-repo
+      type: string
+      description: Docker image repository
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      params: 
+        - name: url
+          value: $(params.github-repo)
+      workspaces:
+        - name: output
+          workspace: pipeline-shared-data
+    - name: run-tests
+      params:
+      - name: ARGS
+        value:
+        - install-ci-test
+      runAfter:
+      - fetch-repository
+      taskRef:
+        name: npm
+        kind: Task
+      workspaces:
+      - name: source
+        workspace: pipeline-shared-data
+    - name: create-image
+      params:
+      - name: IMAGE
+        value: "$(params.image-repo):$(tasks.fetch-repository.results.commit)"
+      runAfter:
+      - run-tests
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      workspaces:
+      - name: source
+        workspace: pipeline-shared-data
