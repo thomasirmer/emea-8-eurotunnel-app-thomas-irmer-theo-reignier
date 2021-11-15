@@ -36,27 +36,27 @@ spec:
         name: npm
         kind: Task
       runAfter:
-      - clone-source-repo
+        - clone-source-repo
       params:
-      - name: ARGS
-        value:
-        - install-ci-test
+        - name: ARGS
+          value:
+            - install-ci-test
       workspaces:
-      - name: source
-        workspace: pipeline-shared-data
+        - name: source
+          workspace: pipeline-shared-data
 
     - name: create-image
       taskRef:
         name: buildah
         kind: ClusterTask
       runAfter:
-      - run-tests
+        - run-tests
       params:
-      - name: IMAGE
-        value: "$(params.docker-image)"
+        - name: IMAGE
+          value: "$(params.docker-image)"
       workspaces:
-      - name: source
-        workspace: pipeline-shared-data
+        - name: source
+          workspace: pipeline-shared-data
 
     - name: create-configuration
       taskRef:
@@ -72,6 +72,20 @@ spec:
           value: "$(tasks.clone-source-repo.results.commit)"
         - name: image-repo
           value: "$(params.docker-image)"
+      workspaces:
+        - name: source
+          workspace: pipeline-shared-data
+
+    - name: deploy
+      taskRef:
+        name: deploy
+      runAfter:
+        - create-configuration
+      params:
+        - name: manifest
+          value: "$(tasks.create-configuration.results.manifest)"
+        - name: app-namespace
+          value: "$(context.pipelineRun.namespace)"
       workspaces:
         - name: source
           workspace: pipeline-shared-data
