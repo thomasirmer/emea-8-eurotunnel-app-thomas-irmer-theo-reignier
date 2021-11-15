@@ -5,8 +5,10 @@ metadata:
 spec:
   serviceAccountName: build-bot
   params:
+    - name: app-name
+      value: eurotunnel-app
     - name: source-repo-url
-      value: https://github.com/cloud-native-garage-method-cohort/emea-8-eurotunnel-app-thomas-irmer-theo-reignier
+      value: https://github.com/thomasirmer/emea-8-eurotunnel-app-thomas-irmer-theo-reignier
     - name: docker-image
       value: quay.io/thomasirmer/eurotunnel-app:$(tasks.clone-source-repo.results.commit)
   pipelineRef:
